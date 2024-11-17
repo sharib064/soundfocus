@@ -165,6 +165,7 @@ class _SoundEnvironmentState extends State<SoundEnvironment> {
                         HapticFeedback.lightImpact();
                         setState(() {
                           selectedOption = options[index];
+                          selectedIndex = -1;
                         });
                       },
                       child: OptionContainer(
