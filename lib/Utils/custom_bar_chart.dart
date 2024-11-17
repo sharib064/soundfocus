@@ -4,7 +4,7 @@ import 'package:soundfocus/services/sleep_service.dart';
 import 'package:soundfocus/models/sleep_model.dart';
 
 class CustomBarChart extends StatefulWidget {
-  const CustomBarChart({Key? key}) : super(key: key);
+  const CustomBarChart({super.key});
 
   @override
   _CustomBarChartState createState() => _CustomBarChartState();

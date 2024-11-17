@@ -96,7 +96,7 @@ class _TimerScheduleState extends State<TimerSchedule> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       "Enable automatic switching",
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),

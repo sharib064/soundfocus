@@ -96,7 +96,7 @@ class _SoundEnvironmentState extends State<SoundEnvironment> {
   String selectedOption = 'All';
 
   final screenWidth =
-      MediaQueryData.fromWindow(WidgetsBinding.instance.window).size.width;
+      MediaQueryData.fromView(WidgetsBinding.instance.window).size.width;
   List<Map<String, dynamic>> getFilteredIcons() {
     if (selectedOption == 'All') {
       return iconData;

@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
       ],
     ];
     return Scaffold(
-      backgroundColor: Color(0xff161616),
+      backgroundColor: const Color(0xff161616),
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(
