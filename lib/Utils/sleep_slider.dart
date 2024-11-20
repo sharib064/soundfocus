@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:soundfocus/services/sleep_service.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
@@ -32,106 +33,141 @@ class _SleepDurationSliderState extends State<SleepDurationSlider> {
   void updateStats() {
     final day = weekday(DateTime.now().weekday);
     SleepService().updateSleepStats(day, _sleepHours);
-    print(day);
-    print(_sleepHours);
   }
 
-  double _sleepHours = 8;
+  double _sleepHours = 0.0;
+  Timer? _timer;
+  bool _isRunning = false;
+  DateTime? _startTime;
+  Duration _currentDuration = Duration.zero;
+
+  void toggleTimer() {
+    if (_isRunning) {
+      _stopTimer();
+    } else {
+      _startTimer();
+    }
+  }
+
+  void _startTimer() {
+    _isRunning = true;
+    _startTime = DateTime.now();
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      setState(() {
+        _currentDuration = DateTime.now().difference(_startTime!);
+        _sleepHours = _currentDuration.inSeconds / 3600;
+      });
+    });
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+
+    updateStats();
+    setState(() {
+      _isRunning = false;
+      _sleepHours = 0;
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  String getFormattedTime() {
+    final int hours = _currentDuration.inHours;
+    final int minutes = _currentDuration.inMinutes % 60;
+    final int seconds = _currentDuration.inSeconds % 60;
+    return '${hours}h ${minutes}m ${seconds}s';
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.black,
-      ),
-      margin: const EdgeInsets.all(20),
-      child: SfRadialGauge(
-        axes: <RadialAxis>[
-          RadialAxis(
-            startAngle: 270,
-            endAngle: 270,
-            minimum: 0,
-            maximum: 24,
-            interval: 6,
-            majorTickStyle:
-                const MajorTickStyle(color: Colors.redAccent, length: 10),
-            minorTickStyle: const MinorTickStyle(
-              color: Colors.redAccent,
-            ),
-            minorTicksPerInterval: 50,
-            axisLineStyle: const AxisLineStyle(
-              color: Color(0xFF1A1A2E),
-            ),
-            axisLabelStyle: const GaugeTextStyle(
-              color: Colors.white,
-            ),
-            ranges: <GaugeRange>[
-              GaugeRange(
-                  endValue: _sleepHours, // We declared this in state class.
+    return GestureDetector(
+      onTap: toggleTimer,
+      child: Container(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.black,
+        ),
+        margin: const EdgeInsets.all(20),
+        child: SfRadialGauge(
+          axes: <RadialAxis>[
+            RadialAxis(
+              startAngle: 270,
+              endAngle: 270,
+              minimum: 0,
+              maximum: 24,
+              interval: 6,
+              majorTickStyle:
+                  const MajorTickStyle(color: Colors.redAccent, length: 10),
+              minorTickStyle: const MinorTickStyle(
+                color: Colors.redAccent,
+              ),
+              minorTicksPerInterval: 50,
+              axisLineStyle: const AxisLineStyle(
+                color: Color(0xFF1A1A2E),
+              ),
+              axisLabelStyle: const GaugeTextStyle(
+                color: Colors.white,
+              ),
+              ranges: <GaugeRange>[
+                GaugeRange(
+                  endValue: _sleepHours,
                   sizeUnit: GaugeSizeUnit.factor,
                   startValue: 0,
                   startWidth: 0.075,
                   gradient: const SweepGradient(
-                      stops: [0.25, 0.75],
-                      colors: [Color(0xffa81515), Color(0xfff53b3b)]),
-                  endWidth: 0.075)
-            ],
-            pointers: <GaugePointer>[
-              // RangePointer(
-              //   value: _sleepHours,
-              //   cornerStyle: CornerStyle.bothCurve,
-              //   width: 15,
-              //   color: Colors.redAccent,
-              //   onValueChanged: (double newValue) {
-              //     setState(() {
-              //       _sleepHours = newValue;
-              //     });
-              //   },
-              // ),
-              MarkerPointer(
-                value: _sleepHours,
-                markerType: MarkerType.circle,
-                color: const Color(0xfff53b3b),
-                markerHeight: 17,
-                markerWidth: 17,
-                enableDragging: true,
-                onValueChanged: (double newValue) {
-                  setState(() {
-                    _sleepHours = newValue;
-                    updateStats();
-                  });
-                },
-              ),
-            ],
-            annotations: <GaugeAnnotation>[
-              GaugeAnnotation(
-                widget: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '${_sleepHours.toStringAsFixed(1)} hours',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const Text(
-                      'Sleep Duration',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
-                    ),
-                  ],
+                    stops: [0.25, 0.75],
+                    colors: [Color(0xffa81515), Color(0xfff53b3b)],
+                  ),
+                  endWidth: 0.075,
                 ),
-                positionFactor: 0.1,
-                angle: 90,
-              ),
-            ],
-          ),
-        ],
+              ],
+              pointers: <GaugePointer>[
+                MarkerPointer(
+                  value: _sleepHours,
+                  markerType: MarkerType.circle,
+                  color: const Color(0xfff53b3b),
+                  markerHeight: 17,
+                  markerWidth: 17,
+                ),
+              ],
+              annotations: <GaugeAnnotation>[
+                GaugeAnnotation(
+                  widget: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        getFormattedTime(),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        _isRunning
+                            ? 'Tracking Sleep..\nClick to stop'
+                            : 'Start tracking',
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                  positionFactor: 0.1,
+                  angle: 90,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

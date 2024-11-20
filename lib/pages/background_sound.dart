@@ -99,167 +99,350 @@ class _BackgroundSoundState extends State<BackgroundSound> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(22, 22, 22, 1),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Stack(
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  width: double.infinity,
-                  child: Image.asset(
-                    'lib/images/bg-sound-banner.png',
-                    fit: BoxFit.cover,
+      backgroundColor: const Color(0xff161616),
+      body: Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            alignment: Alignment.topCenter,
+            image: AssetImage(
+              "lib/images/bg-sound-banner.png",
+            ),
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: GestureDetector(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                            top: 5,
+                            left: 10,
+                            bottom: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white, width: 1),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(15)),
+                          ),
+                          child: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Center(
+                      child: Text(
+                        textAlign: TextAlign.center,
+                        "Background sound environment",
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.23,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: Center(
+                  child: Text(
+                    "Turn on sleep mode, and a soothing song will play and gradually decrease its volume to help you fall asleep peacefully.",
+                    maxLines: 3,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-                Positioned(
-                  top: 10,
-                  left: 16,
-                  child: GestureDetector(
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.all(Radius.circular(4)),
+                          ),
+                          child: const Icon(Icons.music_note),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          "${songs.length} songs",
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                    const Text(
+                      "1h 30 min",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: songs.length,
+                  itemBuilder: (context, index) => GestureDetector(
                     onTap: () {
                       HapticFeedback.lightImpact();
-                      Navigator.pop(context);
+                      startSleepMusic(index);
                     },
                     child: Container(
-                      padding: const EdgeInsets.only(
-                          top: 10, left: 20, bottom: 10, right: 10),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 1),
+                        color: currentSongIndex == index
+                            ? Colors.blueGrey // Color for the playing song
+                            : const Color(0xff190d0d),
+                        border: Border.all(color: Colors.grey, width: 0.2),
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
+                            const BorderRadius.all(Radius.circular(20)),
                       ),
-                      child: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
+                      child: ListTile(
+                        leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: Image.asset(
+                              songs[index][1],
+                              fit: BoxFit.cover,
+                              width: 50,
+                              height: 50,
+                            )),
+                        title: Text(
+                          songs[index][0],
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        subtitle: Text(
+                          songs[index][2],
+                          style: const TextStyle(color: Colors.grey),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Center(
-                child: Text(
-                  "Turn on sleep mode, and a soothing song will play and gradually decrease its volume to help you fall asleep peacefully.",
-                  maxLines: 3,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
-                        ),
-                        child: const Icon(Icons.music_note),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        "${songs.length} songs",
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                  const Text(
-                    "1h 30 min",
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: ListView.builder(
-                itemCount: songs.length,
-                itemBuilder: (context, index) => GestureDetector(
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                child: GestureDetector(
                   onTap: () {
                     HapticFeedback.lightImpact();
-                    startSleepMusic(index);
+                    if (!isPlaying) {
+                      startSleepMusic(0); // Start from the first song
+                    } else {
+                      stop();
+                    }
                   },
                   child: Container(
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    padding: const EdgeInsets.all(5),
+                    padding: const EdgeInsets.symmetric(vertical: 15),
                     decoration: BoxDecoration(
-                      color: currentSongIndex == index
-                          ? Colors.blueGrey // Color for the playing song
-                          : const Color(0xff190d0d),
-                      border: Border.all(color: Colors.grey, width: 0.2),
-                      borderRadius: const BorderRadius.all(Radius.circular(20)),
-                    ),
-                    child: ListTile(
-                      leading: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: Image.asset(
-                            songs[index][1],
-                            fit: BoxFit.cover,
-                            width: 50,
-                            height: 50,
-                          )),
-                      title: Text(
-                        songs[index][0],
-                        style: const TextStyle(color: Colors.white),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xfffb3e3e),
+                          Color(0xff8f0909),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                      subtitle: Text(
-                        songs[index][2],
-                        style: const TextStyle(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Center(
+                      child: Text(
+                        isPlaying
+                            ? "Stop sound playing"
+                            : "Start to fall asleep",
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              child: GestureDetector(
-                onTap: () {
-                  HapticFeedback.lightImpact();
-                  if (!isPlaying) {
-                    startSleepMusic(0); // Start from the first song
-                  } else {
-                    stop();
-                  }
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xfffb3e3e),
-                        Color(0xff8f0909),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Center(
-                    child: Text(
-                      isPlaying ? "Stop sound playing" : "Start to fall asleep",
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+    // return Scaffold(
+    //   backgroundColor: const Color.fromRGBO(22, 22, 22, 1),
+    //   body: SafeArea(
+    //     child: Column(
+    //       crossAxisAlignment: CrossAxisAlignment.start,
+    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //       children: [
+    //         Stack(
+    //           children: [
+    //             SizedBox(
+    //               height: MediaQuery.of(context).size.height * 0.3,
+    //               width: double.infinity,
+    //               child: Image.asset(
+    //                 'lib/images/bg-sound-banner.png',
+    //                 fit: BoxFit.cover,
+    //               ),
+    //             ),
+    //             Positioned(
+    //               top: 10,
+    //               left: 16,
+    //               child: GestureDetector(
+    //                 onTap: () {
+    //                   HapticFeedback.lightImpact();
+    //                   Navigator.pop(context);
+    //                 },
+    //                 child: Container(
+    //                   padding: const EdgeInsets.only(
+    //                       top: 10, left: 20, bottom: 10, right: 10),
+    //                   decoration: BoxDecoration(
+    //                     border: Border.all(color: Colors.white, width: 1),
+    //                     borderRadius:
+    //                         const BorderRadius.all(Radius.circular(10)),
+    //                   ),
+    //                   child: const Icon(
+    //                     Icons.arrow_back_ios,
+    //                     color: Colors.white,
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //         const Padding(
+    //           padding: EdgeInsets.symmetric(horizontal: 20.0),
+    //           child: Center(
+    //             child: Text(
+    //               "Turn on sleep mode, and a soothing song will play and gradually decrease its volume to help you fall asleep peacefully.",
+    //               maxLines: 3,
+    //               textAlign: TextAlign.center,
+    //               style: TextStyle(
+    //                 color: Colors.white,
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //         Padding(
+    //           padding: const EdgeInsets.symmetric(horizontal: 20.0),
+    //           child: Row(
+    //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    //             children: [
+    //               Row(
+    //                 children: [
+    //                   Container(
+    //                     decoration: const BoxDecoration(
+    //                       color: Colors.grey,
+    //                       borderRadius: BorderRadius.all(Radius.circular(4)),
+    //                     ),
+    //                     child: const Icon(Icons.music_note),
+    //                   ),
+    //                   const SizedBox(width: 5),
+    //                   Text(
+    //                     "${songs.length} songs",
+    //                     style: const TextStyle(color: Colors.grey),
+    //                   ),
+    //                 ],
+    //               ),
+    //               const Text(
+    //                 "1h 30 min",
+    //                 style: TextStyle(color: Colors.grey),
+    //               ),
+    //             ],
+    //           ),
+    //         ),
+    //         SizedBox(
+    //           height: MediaQuery.of(context).size.height * 0.4,
+    //           child: ListView.builder(
+    //             itemCount: songs.length,
+    //             itemBuilder: (context, index) => GestureDetector(
+    //               onTap: () {
+    //                 HapticFeedback.lightImpact();
+    //                 startSleepMusic(index);
+    //               },
+    //               child: Container(
+    //                 margin:
+    //                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    //                 padding: const EdgeInsets.all(5),
+    //                 decoration: BoxDecoration(
+    //                   color: currentSongIndex == index
+    //                       ? Colors.blueGrey // Color for the playing song
+    //                       : const Color(0xff190d0d),
+    //                   border: Border.all(color: Colors.grey, width: 0.2),
+    //                   borderRadius: const BorderRadius.all(Radius.circular(20)),
+    //                 ),
+    //                 child: ListTile(
+    //                   leading: ClipRRect(
+    //                       borderRadius: BorderRadius.circular(5),
+    //                       child: Image.asset(
+    //                         songs[index][1],
+    //                         fit: BoxFit.cover,
+    //                         width: 50,
+    //                         height: 50,
+    //                       )),
+    //                   title: Text(
+    //                     songs[index][0],
+    //                     style: const TextStyle(color: Colors.white),
+    //                   ),
+    //                   subtitle: Text(
+    //                     songs[index][2],
+    //                     style: const TextStyle(color: Colors.grey),
+    //                   ),
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //         Padding(
+    //           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+    //           child: GestureDetector(
+    //             onTap: () {
+    //               HapticFeedback.lightImpact();
+    //               if (!isPlaying) {
+    //                 startSleepMusic(0); // Start from the first song
+    //               } else {
+    //                 stop();
+    //               }
+    //             },
+    //             child: Container(
+    //               padding: const EdgeInsets.symmetric(vertical: 15),
+    //               decoration: BoxDecoration(
+    //                 gradient: const LinearGradient(
+    //                   colors: [
+    //                     Color(0xfffb3e3e),
+    //                     Color(0xff8f0909),
+    //                   ],
+    //                   begin: Alignment.topLeft,
+    //                   end: Alignment.bottomRight,
+    //                 ),
+    //                 borderRadius: BorderRadius.circular(16),
+    //               ),
+    //               child: Center(
+    //                 child: Text(
+    //                   isPlaying ? "Stop sound playing" : "Start to fall asleep",
+    //                   style: const TextStyle(
+    //                       color: Colors.white, fontWeight: FontWeight.bold),
+    //                 ),
+    //               ),
+    //             ),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }

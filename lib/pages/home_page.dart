@@ -50,6 +50,16 @@ class HomePage extends StatelessWidget {
           children: [
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.1,
+              child: Container(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  "Sound Focus",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
             ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.32,

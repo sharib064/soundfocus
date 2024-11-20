@@ -50,6 +50,7 @@ dependencies:
   path_provider: ^2.1.5
   volume_controller: ^2.0.8
   flutter_native_splash: ^2.4.1
+  lottie: ^3.0.0
 
 flutter_native_splash:
   android: true
