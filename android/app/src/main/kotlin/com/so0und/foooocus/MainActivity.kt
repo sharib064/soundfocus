@@ -1,4 +1,4 @@
-package com.example.soundfocus
+package com.so0und.foooocus
 
 import android.content.ContentValues
 import android.content.Intent

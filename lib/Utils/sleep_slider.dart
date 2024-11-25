@@ -40,11 +40,18 @@ class _SleepDurationSliderState extends State<SleepDurationSlider> {
   bool _isRunning = false;
   DateTime? _startTime;
   Duration _currentDuration = Duration.zero;
+  String clockText = "Start tracking";
 
   void toggleTimer() {
     if (_isRunning) {
+      setState(() {
+        clockText = "Start tracking";
+      });
       _stopTimer();
     } else {
+      setState(() {
+        clockText = "Tracking Sleep..\nClick to stop";
+      });
       _startTimer();
     }
   }
@@ -149,9 +156,7 @@ class _SleepDurationSliderState extends State<SleepDurationSlider> {
                         ),
                       ),
                       Text(
-                        _isRunning
-                            ? 'Tracking Sleep..\nClick to stop'
-                            : 'Start tracking',
+                        clockText,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontSize: 14,
